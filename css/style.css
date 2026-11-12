@@ -1,0 +1,515 @@
+:root {
+  color-scheme: light dark; /* formulářové prvky, posuvníky a lupa podle systému */
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --accent: #7c3aed;
+  --accent-text: #ffffff;
+  --good: #1f9d55;
+  --good-bg: #e3f5ea;
+  --bad: #d63a3a;
+  --bad-bg: #fbe7e7;
+  --note-bg: #fff6dd;
+  --badge-s: 75%; /* sytost a světlost kulatých ikon u témat (barva podle --hue) */
+  --badge-l: 92%;
+  --g-der: #1d6fd8; /* rod: der = modrá, die = červená, das = zelená (vždy i s textem členu) */
+  --g-die: #d63a3a;
+  --g-das: #1f9d55;
+}
+
+/* Vzhled: ve výchozím stavu podle systému; ruční volba v nastavení nastaví data-theme na <html> */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c1c1e;
+    --card: #2c2c2e;
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --line: #48484a;
+    --accent: #a78bfa;
+    --accent-text: #0b0b0c;
+    --good: #4cd080;
+    --good-bg: #17382a;
+    --bad: #ff6b6b;
+    --bad-bg: #3d1f1f;
+    --note-bg: #3a331c;
+    --badge-s: 35%;
+    --badge-l: 28%;
+    --g-der: #6cb0ff;
+    --g-die: #ff7b7b;
+    --g-das: #4cd080;
+  }
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+
+/* rozměr, ne barva: mimo hlavní blok, aby se nemusel opakovat v tmavých režimech */
+:root { --tabbar-h: 57px; /* tlačítka min. 56px + 1px ohraničení */ }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+    --bg: #1c1c1e;
+    --card: #2c2c2e;
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --line: #48484a;
+    --accent: #a78bfa;
+    --accent-text: #0b0b0c;
+    --good: #4cd080;
+    --good-bg: #17382a;
+    --bad: #ff6b6b;
+    --bad-bg: #3d1f1f;
+    --note-bg: #3a331c;
+  --badge-s: 35%;
+  --badge-l: 28%;
+  --g-der: #6cb0ff;
+  --g-die: #ff7b7b;
+  --g-das: #4cd080;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+
+.beta-banner {
+  background: var(--note-bg);
+  color: var(--text);
+  border-bottom: 2px solid var(--bad);
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+
+.back {
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 8px 8px 0;
+  min-height: 40px;
+}
+.back[hidden] { display: none; }
+[hidden] { display: none !important; } /* třída .btn.small jinak přebíjí atribut hidden */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.stats { display: flex; gap: 14px; font-weight: 600; }
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 8px 16px 48px;
+}
+
+/* Spodní lišta záložek (jen na hlavních obrazovkách); body.has-tabs odsadí obsah */
+body.has-tabs main { padding-bottom: calc(var(--tabbar-h) + 23px + env(safe-area-inset-bottom)); }
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar[hidden] { display: none; }
+.tabbar button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 56px;
+  padding: 6px 2px;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: .68rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tabbar button[aria-current="page"] { color: var(--accent); }
+.tabbar button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+
+h1 { font-size: 1.5rem; margin: 8px 0 12px; }
+h2 { font-size: 1.25rem; margin: 20px 0 8px; }
+p { margin: 8px 0; }
+.muted { color: var(--muted); }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  text-align: left;
+  margin: 8px 0;
+  min-height: 48px;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+  text-align: center;
+  font-weight: 600;
+}
+
+.btn.small { display: inline-block; width: auto; padding: 8px 14px; min-height: 40px; margin: 4px 6px 4px 0; }
+.btn[disabled] { opacity: .5; cursor: default; }
+.btn.good { background: var(--good-bg); border-color: var(--good); }
+.warn-card { border: 3px solid var(--bad); background: var(--bad-bg); }
+.btn.bad { background: var(--bad-bg); border-color: var(--bad); }
+
+.lesson { display: flex; align-items: center; gap: 12px; }
+.lesson .info { flex: 1; }
+.lesson { border-left: 4px solid hsl(var(--hue, 210) 60% 55%); }
+.lesson .badge {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  background: hsl(var(--hue, 210) var(--badge-s) var(--badge-l));
+}
+.lesson.locked { opacity: .55; }
+
+.progress {
+  height: 8px;
+  background: var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 8px 0 16px;
+}
+
+.progress > div { height: 100%; background: var(--accent); transition: width .2s; }
+
+.big-word { font-size: 2rem; font-weight: 700; margin: 8px 0; }
+/* Rody: barva doplňuje text členu, nikdy ho nenahrazuje */
+.g-der { color: var(--g-der); }
+.g-die { color: var(--g-die); }
+.g-das { color: var(--g-das); }
+.btn.g-der { border-left: 6px solid var(--g-der); }
+.btn.g-die { border-left: 6px solid var(--g-die); }
+.btn.g-das { border-left: 6px solid var(--g-das); }
+.umlaut-row { display: flex; gap: 8px; margin: 8px 0; }
+.umlaut-row .btn { min-width: 48px; min-height: 44px; font-size: 1.1rem; }
+.sentence { font-style: italic; }
+/* Kapsle typu slova (frázové sloveso / kolokace); barvy z proměnných fungují v obou režimech */
+.kind-tag { display: inline-block; font-size: 0.75rem; color: var(--muted); border: 1px solid var(--muted); border-radius: 999px; padding: 1px 8px; margin: 0 0 6px; }
+
+.note {
+  background: var(--note-bg);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  font-size: .95rem;
+}
+
+.feedback { border-radius: 12px; padding: 12px 14px; margin: 12px 0; }
+.feedback.good { background: var(--good-bg); border: 1px solid var(--good); }
+.feedback.bad { background: var(--bad-bg); border: 1px solid var(--bad); }
+
+input[type="text"] {
+  width: 100%;
+  padding: 14px;
+  font: inherit;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+}
+
+.row { display: flex; flex-wrap: wrap; gap: 4px; }
+.center { text-align: center; }
+.result-score { font-size: 3rem; font-weight: 700; margin: 12px 0; }
+
+.tiles { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; min-height: 52px; }
+.tiles.answer { border-bottom: 2px solid var(--line); padding-bottom: 8px; margin-bottom: 14px; }
+.tile {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  min-height: 44px;
+}
+.tile.ghost { visibility: hidden; }
+.tile.good { background: var(--good-bg); border-color: var(--good); }
+.tile.bad { background: var(--bad-bg); border-color: var(--bad); }
+.tile.selected { border-color: var(--accent); outline: 2px solid var(--accent); }
+.tile[disabled] { opacity: .6; cursor: default; }
+
+.match { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.match .col { display: flex; flex-direction: column; gap: 8px; }
+.match .tile { text-align: left; }
+
+.brand img { border-radius: 8px; }
+
+.rec-panel { margin-top: 4px; font-size: .95rem; }
+.rec-panel:empty { display: none; }
+
+.pron { color: var(--muted); font-size: 1.1rem; letter-spacing: .02em; margin: -2px 0 6px; }
+details.card summary { cursor: pointer; font-weight: 600; }
+details.card ul { padding-left: 20px; margin: 8px 0 0; }
+
+.bubble { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; margin: 8px 40px 8px 0; }
+.bubble.mine { margin: 8px 0 8px 40px; border-color: var(--accent); }
+
+.chart { display: flex; gap: 6px; align-items: flex-end; margin: 12px 0 8px; text-align: center; }
+.chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.chart-track { width: 100%; height: 96px; display: flex; align-items: flex-end; }
+.chart-bar { width: 100%; min-height: 2px; background: var(--line); border-radius: 6px 6px 0 0; }
+.chart-bar.today { background: var(--accent); }
+.chart-value { font-size: .8rem; min-height: 1.1em; }
+
+.reminder { border-color: var(--accent); border-width: 2px; }
+.reminder .btn { margin-top: 10px; }
+
+.owl { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
+.owl img { flex: none; border-radius: 12px; }
+.owl-bubble { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; }
+
+/* časové osy (Gramatika) */
+.timeline { display: block; width: 100%; height: auto; margin: 8px 0; }
+.timeline-mini { max-width: 260px; margin: 6px 0 0; pointer-events: none; }
+.tl-axis { stroke: var(--muted); stroke-width: 3; }
+.tl-axis-head { fill: var(--muted); }
+.tl-side { fill: var(--muted); font-size: 16px; }
+.tl-label { fill: var(--text); font-size: 20px; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+.tl-now line { stroke: var(--accent); stroke-width: 3; }
+.tl-now text { fill: var(--accent); font-size: 20px; font-weight: 700; }
+.tl-mark { fill: var(--bad); font-size: 30px; font-weight: 700; }
+.tl-bar { fill: var(--good); }
+.tl-arrow-line { stroke: var(--good); stroke-width: 4; }
+.tl-arrow-head { fill: var(--good); }
+.tl-dot { fill: var(--good); stroke: var(--bg); stroke-width: 2px; }
+.tl-frame { fill: var(--accent); fill-opacity: .15; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 4; }
+.scene-text { font-size: 1.05rem; }
+.quiz-option-diagram { display: block; }
+
+/* prostorová schémata (předložky místa) */
+.spatial { display: block; width: 100%; height: auto; margin: 8px 0; }
+.spatial-mini { max-width: 260px; margin: 6px 0 0; pointer-events: none; }
+.sp-ground { stroke: var(--muted); stroke-width: 3; }
+.sp-peg { fill: var(--muted); }
+.sp-slab { fill: var(--muted); }
+.sp-leg { stroke: var(--muted); stroke-width: 4; }
+.sp-room { fill: var(--accent); fill-opacity: .1; stroke: var(--accent); stroke-width: 3; }
+.sp-clock { fill: var(--bg); stroke: var(--muted); stroke-width: 4; }
+.sp-hand { stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.sp-page { fill: var(--bg); stroke: var(--muted); stroke-width: 3; }
+.sp-pagehead { fill: var(--muted); }
+.sp-period { fill: var(--accent); fill-opacity: .1; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 8 5; }
+.sp-band { fill: var(--accent); fill-opacity: .45; }
+.sp-tunel-fill { fill: var(--muted); fill-opacity: .12; }
+.sp-tunel-wall { stroke: var(--muted); stroke-width: 6; fill: none; stroke-linecap: round; }
+.sp-river { fill: var(--accent); fill-opacity: .45; }
+.sp-move { stroke: var(--good); stroke-width: 4; fill: none; stroke-linecap: round; }
+.sp-move-head { fill: var(--good); }
+.sp-label { fill: var(--text); font-size: 20px; }
+.sp-figure { fill: var(--accent); stroke: var(--bg); stroke-width: 2; }
+.sp-figlabel { fill: var(--text); font-size: 20px; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+
+/* Schémata členů (js/articles.js): barvy jen přes proměnné, takže platí ve světlém i tmavém režimu */
+.articles { display: block; width: 100%; height: auto; margin: 8px 0; }
+.articles-mini { max-width: 260px; margin: 6px 0 0; pointer-events: none; }
+.ar-ground { stroke: var(--muted); stroke-width: 3; }
+.ar-thing { fill: var(--accent); fill-opacity: .25; stroke: var(--accent); stroke-width: 3; }
+.ar-item { fill: var(--accent); fill-opacity: .25; stroke: var(--accent); stroke-width: 3; }
+.ar-picked { fill-opacity: .6; stroke-width: 4; }
+.ar-pile { fill: var(--muted); fill-opacity: .55; stroke: var(--muted); stroke-width: 2; }
+.ar-card { fill: var(--card); stroke: var(--line); stroke-width: 3; }
+.ar-figure { stroke: var(--bg); stroke-width: 2; }
+.ar-mluvci .ar-figure { fill: var(--accent); }
+.ar-posluchac .ar-figure { fill: var(--muted); }
+.ar-shared { fill: var(--good); fill-opacity: .1; stroke: var(--good); stroke-width: 3; stroke-dasharray: 8 5; }
+.ar-point { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.ar-gaze { stroke: var(--good); stroke-width: 3; stroke-dasharray: 3 6; stroke-linecap: round; }
+.ar-question-bg { fill: var(--note-bg); stroke: var(--muted); stroke-width: 2; }
+.ar-question-mark { fill: none; stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.ar-question-dot { fill: var(--text); }
+.ar-label { fill: var(--text); font-size: 20px; }
+.ar-figlabel { fill: var(--text); font-size: 20px; paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+
+/* Cesta lekcí: body na vypočtených souřadnicích nad jednou křivkou */
+.path { position: relative; width: 320px; max-width: 100%; margin: 16px auto 0; }
+.path-line { position: absolute; left: 0; top: 0; }
+.path-line-bg { fill: none; stroke: var(--line); stroke-width: 8; stroke-linecap: round; }
+.path-step { position: absolute; width: 64px; height: 64px; }
+.path-section {
+  position: absolute; left: 8px; right: 8px; z-index: 1; margin: 0;
+  transform: translateY(-50%);
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 999px;
+  border: 2px solid hsl(var(--hue, 210) 60% 55%);
+  background: hsl(var(--hue, 210) var(--badge-s) var(--badge-l));
+  color: var(--text); font-size: .95rem; line-height: 1.2;
+}
+.path-section-count { font-size: .8rem; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.path-node {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border-radius: 50%;
+  border: 3px solid hsl(var(--hue, 210) 60% 55%);
+  background: hsl(var(--hue, 210) var(--badge-s) var(--badge-l));
+  color: var(--text);
+  font: inherit;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.path-node.done { background: hsl(var(--hue, 210) 60% 55%); }
+.path-node.locked { background: var(--line); border-color: var(--line); cursor: default; }
+.path-node.locked .path-icon { opacity: .35; }
+.path-node.current {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent);
+  animation: path-pulse 2s ease-in-out infinite;
+}
+.path-badge { position: absolute; right: -6px; bottom: -6px; font-size: 1.1rem; line-height: 1; }
+.path-node:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.path-caption {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translateX(-50%);
+  width: 150px;
+  text-align: center;
+  font-size: .8rem;
+  line-height: 1.25;
+  color: var(--text);
+}
+.path-best, .path-words { display: block; font-size: .75rem; color: var(--muted); }
+.path-start { position: absolute; left: calc(100% + 18px); top: 50%; transform: translateY(-50%); margin: 0; min-height: 44px; }
+.path-start.left { left: auto; right: calc(100% + 18px); }
+.path-message { position: sticky; bottom: calc(var(--tabbar-h) + 15px + env(safe-area-inset-bottom)); pointer-events: none; background: var(--bg); text-align: center; min-height: 1.4em; font-weight: 600; }
+@keyframes path-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent); }
+  50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 15%, transparent); }
+}
+/* oslavy: vyskočení právě dokončeného bodu a padající konfety (barvy jen z tokenů) */
+.path-node.just-done { animation: pop .6s ease-out 1; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  70% { transform: scale(.95); }
+  100% { transform: scale(1); }
+}
+.confetti { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 20; }
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall 2.5s ease-in forwards;
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(540deg); opacity: .9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .path-node.current { animation: none; }
+  .path-node.just-done { animation: none; }
+  .confetti { display: none; }
+}
+
+/* týdenní výzva: karta na Cestě (mezery kolem ukazatele a řádku Zbývá) */
+.challenge-card { display: flex; flex-direction: column; gap: 6px; }
+.challenge-card .progress { margin: 4px 0; }
+.challenge-card > .muted:last-child { margin-top: 2px; }
+
+/* odznaky: karta Nový odznak na výsledkové obrazovce */
+.badge-award { border: 2px solid var(--accent); }
+.badge-award-row { margin-top: 6px; overflow-wrap: anywhere; }
+
+/* odznaky: galerie v Pokroku a řada na Cestě */
+.badge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 8px 0 16px; }
+@media (min-width: 420px) { .badge-grid { grid-template-columns: repeat(3, 1fr); } }
+.badge-tile { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 8px; text-align: center; min-height: 44px; overflow-wrap: anywhere; }
+.badge-tile.earned { border-color: var(--accent); }
+.badge-tile.locked { opacity: .6; }
+.badge-tile-icon { font-size: 1.8rem; line-height: 1.2; }
+.badge-strip .row { justify-content: space-around; gap: 8px; margin-bottom: 8px; }
+.badge-chip { text-align: center; min-width: 0; flex: 1; overflow-wrap: anywhere; font-size: .85rem; }
+
+/* Přepínač úrovní Cesty: segmentový, tlačítka se dělí o šířku (vejdou se i tři do 320 px).
+   Kontrast textu (WCAG AA 4.5:1): --muted na --card 5,07:1 světlý / 5,42:1 tmavý, --text na vybraném odstínu min. 6,6:1 */
+.level-switch { display: flex; gap: 4px; max-width: 320px; margin: 16px auto 0; padding: 3px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); }
+.level-btn {
+  flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 8px 6px; border-radius: 999px; border: 2px solid transparent; overflow: hidden;
+  background: transparent; color: var(--text); font: inherit; font-size: .9rem; line-height: 1.2; cursor: pointer;
+}
+.level-btn strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.level-btn.active { background: hsl(var(--hue, 210) var(--badge-s) var(--badge-l)); border-color: hsl(var(--hue, 210) 60% 55%); color: var(--text); }
+.level-btn.locked { color: var(--muted); cursor: default; }
+/* A2 a B1 zatím nejsou: název nad popiskem, aby se vešly obě položky vedle A1 i na 320 px */
+.level-btn.upcoming { flex-direction: column; gap: 0; line-height: 1.15; }
+.level-btn.upcoming .level-count { font-size: .68rem; }
+.level-count { flex: none; font-size: .8rem; color: var(--muted); white-space: nowrap; }
+.level-btn.active .level-count { color: var(--text); }
+.level-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
